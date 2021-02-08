@@ -3,33 +3,32 @@ HiLo Exploratory Analysis
 Fiona Francis
 2/8/2021
 
-## R Markdown
+This analysis is for Sharon Jeffrey and is part of an overall project
+looking at the effect of curret speed on fish and invertebrate
+communities at different sites in the Straight of Georgia. Jillian
+Campbell’s MSc analysis was also a component of this project.
 
-This is an R Markdown document. Markdown is a simple formatting syntax
-for authoring HTML, PDF, and MS Word documents. For more details on
-using R Markdown see <http://rmarkdown.rstudio.com>.
+Sharon is interested in using a mixed-effects model to look at how
+different factors including site current speed, depth and substrate type
+affect invert biomass and invert % cover.
 
-When you click the **Knit** button a document will be generated that
-includes both content as well as the output of any embedded R code
-chunks within the document. You can embed an R code chunk like this:
+The study uses 14 sites, 7 “high” current sites and 7 “low” current
+sites. At each site Sharon collected invert data in 9 quadrats that are
+seperated into 3 depths (10, 30 and 50 ft depth). There is no repeat
+sampling so there are a total of 126 data points (14sites\*9quadrats).
+However, because there are multiple collections at each site, a mized
+effects model is necessary to account for replciation at the site level.
+I don’t think that we need to nest transect within site because I think
+that each transect was at 1 depth (need to confirm this with Sharon) and
+so depth is already being included as a fixed effect and accounting for
+this replication (We need to worry about transect if they were run
+perpendicular to shore (i.e. from 10 to 50 m)).
 
-``` r
-summary(cars)
-```
+## Loading Data
 
-    ##      speed           dist       
-    ##  Min.   : 4.0   Min.   :  2.00  
-    ##  1st Qu.:12.0   1st Qu.: 26.00  
-    ##  Median :15.0   Median : 36.00  
-    ##  Mean   :15.4   Mean   : 42.98  
-    ##  3rd Qu.:19.0   3rd Qu.: 56.00  
-    ##  Max.   :25.0   Max.   :120.00
+## Data visualization
 
-## Including Plots
-
-You can also embed plots, for example:
-
-![](HiLo_exploratory_files/figure-gfm/pressure-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/pressure-1.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/pressure-2.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/pressure-3.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/pressure-4.png)<!-- -->
 
 Note that the `echo = FALSE` parameter was added to the code chunk to
 prevent printing of the R code that generated the plot.
