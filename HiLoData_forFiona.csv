@@ -1,4 +1,4 @@
-Date,Site,HiLo,Transect,Quadrat,QuadName,Diver_invert,Diver_algae,Invert%,Invert_Biomass,DominantSp_1,DominantSp_2,substrate_1,substrate_1cov,substrate2,substrate2cov,substrate3,substrate3cov,Comments
+Date,Site,HiLo,Transect,Quadrat,QuadName,Diver_invert,Diver_algae,Invert_percent,Invert_Biomass,DominantSp_1,DominantSp_2,substrate_1,substrate_1cov,substrate2,substrate2cov,substrate3,substrate3cov,Comments
 26-Jun,Burial_Is,Hi,T1,Q10,Burial_Is_T1Q10,sharon,candice,30,15000,,,2,80,10,20,,,
 26-Jun,Burial_Is,Hi,T1,Q30,Burial_Is_T1Q30,sharon,candice,80,80000,Metridium farcimen,Dodecaceria fewksi,1,50,2,50,,,
 26-Jun,Burial_Is,Hi,T1,Q50,Burial_Is_T1Q50,sharon,candice,30,6000,,,5,70,4,20,7,10,
