@@ -4,27 +4,53 @@ author: "Fiona Francis"
 date: "2/8/2021"
 output: github_document
 ---
+This analysis is for Sharon Jeffrey and is part of an overall project looking at the effect of curret speed on fish and invertebrate communities at different sites in the Straight of Georgia. Jillian Campbell's MSc analysis was also a component of this project. 
 
+Sharon is interested in using a mixed-effects model to look at how different factors including site current speed, depth and substrate type affect invert biomass and invert % cover. 
+
+The study uses 14 sites, 7 "high" current sites and 7 "low" current sites. At each site Sharon collected invert data in 9 quadrats that are seperated into 3 depths (10, 30 and 50 ft depth). There is no repeat sampling so there are a total of 126 data points (14sites*9quadrats). However, because there are multiple collections at each site, a mized effects model is necessary to account for replciation at the site level. I don't think that we need to nest transect within site because I think that each transect was at 1 depth (need to confirm this with Sharon) and so depth is already being included as a fixed effect and accounting for this replication (We need to worry about transect if they were run perpendicular to shore (i.e. from 10 to 50 m))
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Loading Data
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r cars, include = FALSE}
+library(tidyverse)
+library(fishualize)
+invert <- read_csv("HiLoData_forFiona.csv")
+head(invert)
+glimpse(invert)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+# look at which sites are which 
+invert %>% filter(HiLo == "Hi") %>% distinct(Site)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
+## Data visualization
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+
+# Plot Hi vs Lo biomass
+ggplot(data = invert) + geom_point(aes(HiLo, Invert_Biomass, colour = HiLo, alpha = 1.4), size = 4, show.legend = F) +
+  scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
+
+#Plot biomass at each quad depth overall
+
+ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = Quadrat), size = 3, show.legend = F) +
+   scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
+
+# plot biomass at quad depth by site
+
+ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = Quadrat), size = 3, show.legend = F) +
+   scale_color_fish_d(option = "Sparisoma_viride", direction = -1) +
+  facet_wrap(~ Site, nrow = 3)
+
+# plot biomass at quad depth by site coloured by Hi Lo
+
+ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = HiLo), size = 3, show.legend = F) +
+   scale_color_fish_d(option = "Sparisoma_viride", direction = -1) +
+  facet_wrap(~ Site, nrow = 3)
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
