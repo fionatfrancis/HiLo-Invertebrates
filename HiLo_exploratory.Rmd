@@ -19,6 +19,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, include = FALSE}
 library(tidyverse)
 library(fishualize)
+library(nlme)
+library(bbmle)
 
 invert <- read_csv("HiLoData_forFiona.csv")
 site_info <- read_csv("sitelevel_data.csv")
@@ -36,7 +38,7 @@ invert %>% filter(HiLo == "Hi") %>% distinct(Site)
 
 # remove columns we don't need right now 
 
-site_info <- site_info %>% select(Site, site_length_m, SlopeAngle, AvgDailMaxCurr, InvertSpRichness)
+site_info <- site_info %>% select(Site, site_length_m, SlopeAngle, AvgDailMaxCurr, InvertSpRichness, AvgRkCov)
 
 # add site length, slope and current speed to invert dataframe
 
@@ -108,26 +110,110 @@ ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = HiLo), 
 
 # Plot biomass vs current speed coloured by hi lo
 ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, Invert_Biomass, colour = HiLo, alpha = 2), size = 4, show.legend = F) +
-  scale_color_fish_d(option = "Gramma_loreto", direction = -1)
+  scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
 
+# plot of biomass vs current speed coloured by quadrat
 
 ggplot(all.data) + geom_point(aes(AvgDailMaxCurr, Invert_Biomass, colour = Quadrat, alpha = 2), size = 4) +
    scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
+
+# plot of biomass vs rock cover
+
+ggplot(all.data) + geom_point(aes(AvgRkCov, Invert_Biomass, colour = Quadrat), size = 4) +
+    scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
 
 ```
 
 
 ## mixed-effect models
 
-
-
 ```{r, include = FALSE}
-head(invert)
-glimpse(invert)
-# variables to include as fixed effects are current speed, depth, substrate_1
+head(all.data)
+glimpse(all.data)
 
-# look at which sites are which 
-invert %>% filter(HiLo == "Hi") %>% distinct(Site)
+# using max current speed, fitting a random effect for site
+
+#single variable
+Null <- lme(Invert_Biomass ~ 1, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm1 <-  lme(Invert_Biomass ~ AvgDailMaxCurr, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm2  <- lme(Invert_Biomass ~ Quadrat, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm3 <- lme(Invert_Biomass ~ SlopeAngle, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm4 <-  lme(Invert_Biomass ~ AvgRkCov,
+            random = ~ 1 | Site, data = all.data)
+
+#two variables
+Lm5 <- lme(Invert_Biomass ~ AvgDailMaxCurr + Quadrat, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm6 <- lme(Invert_Biomass ~ AvgDailMaxCurr + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm7 <- lme(Invert_Biomass ~ AvgDailMaxCurr + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm8 <- lme(Invert_Biomass ~ Quadrat + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm9 <- lme(Invert_Biomass ~ Quadrat + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm10 <-  lme(Invert_Biomass ~ SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data)
+
+#three variables
+
+Lm11 <- lme(Invert_Biomass ~ AvgDailMaxCurr + Quadrat, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm12 <- lme(Invert_Biomass ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm13 <- lme(Invert_Biomass ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm14 <- lme(Invert_Biomass ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data)
+
+Lm15 <- lme(Invert_Biomass ~ Quadrat + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data)
+
+# four variables
+
+Lm16 <- lme(Invert_Biomass ~ AvgDailMaxCurr + Quadrat + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data)
+
+
+names <- c("Null", "Current", "Depth", "Slope", "Rock")
+
+AICctab(Null, Lm1, Lm2, Lm3, Lm4, mnames=names, base=TRUE, weights=TRUE, logLik=TRUE)
+
+## let's look at Lm3 in more detail and look at the diagnostics
+# model summary
+Lm3
+
+# this doesn't look great, there is a very obvious cone shape 
+plot(Lm3)
+
+#another way to plot this with ggplot
+ggplot(data.frame(biomass=predict(Lm3,type="link"),pearson=residuals(Lm3,type="pearson")),
+       aes(x=biomass,y=pearson)) +
+  geom_point() +
+  theme_bw()
+
+#qqnorm plot not great, not terrible, could try and add a variance structure or log transform biomass
+
+qqnorm(residuals(Lm3))
+
+# variables to include as fixed effects are current speed, depth, Average rock cover
+
 
 ```
 
