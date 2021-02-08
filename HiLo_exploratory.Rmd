@@ -16,15 +16,35 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Loading Data
 
-```{r cars, include = FALSE}
+```{r, include = FALSE}
 library(tidyverse)
 library(fishualize)
+
 invert <- read_csv("HiLoData_forFiona.csv")
+site_info <- read_csv("sitelevel_data.csv")
+
 head(invert)
+head(site_info)
 glimpse(invert)
+
+# rename column in site_info
+
+site_info <- site_info %>% rename(site_length_m = 3)
 
 # look at which sites are which 
 invert %>% filter(HiLo == "Hi") %>% distinct(Site)
+
+# remove columns we don't need right now 
+
+site_info <- site_info %>% select(Site, site_length_m, SlopeAngle, AvgDailMaxCurr, InvertSpRichness)
+
+# add site length, slope and current speed to invert dataframe
+
+all.data <- right_join(invert, site_info, by = "Site")
+glimpse(all.data)
+head(all.data)
+print(all.data, n = 60)
+all.data
 ```
 
 ## Data visualization
@@ -54,4 +74,60 @@ ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = HiLo), 
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Same plots but looking at % invert cover instead of biomass
+
+
+```{r pressure, echo=FALSE}
+
+# Plot Hi vs Lo percent
+ggplot(data = invert) + geom_point(aes(HiLo, Invert_percent, colour = HiLo, alpha = 2), size = 4, show.legend = F) +
+  scale_color_fish_d(option = "Gramma_loreto", direction = -1)
+
+#Plot percent at each quad depth overall
+
+ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = Quadrat), size = 3, show.legend = F) +
+   scale_color_fish_d(option = "Gramma_loreto", direction = -1)
+
+# plot percent at quad depth by site
+
+ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = Quadrat), size = 3, show.legend = F) +
+   scale_color_fish_d(option = "Gramma_loreto", direction = -1) +
+  facet_wrap(~ Site, nrow = 3)
+
+# plot percent at quad depth by site coloured by Hi Lo
+
+ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = HiLo), size = 3, show.legend = F) +
+   scale_color_fish_d(option = "Gramma_loreto", direction = -1) +
+  facet_wrap(~ Site, nrow = 3)
+
+```
+
+## Plots of biomass vs current speed
+
+```{r, echo=FALSE}
+
+# Plot biomass vs current speed coloured by hi lo
+ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, Invert_Biomass, colour = HiLo, alpha = 2), size = 4, show.legend = F) +
+  scale_color_fish_d(option = "Gramma_loreto", direction = -1)
+
+
+ggplot(all.data) + geom_point(aes(AvgDailMaxCurr, Invert_Biomass, colour = Quadrat, alpha = 2), size = 4) +
+   scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
+
+```
+
+
+## mixed-effect models
+
+
+
+```{r, include = FALSE}
+head(invert)
+glimpse(invert)
+# variables to include as fixed effects are current speed, depth, substrate_1
+
+# look at which sites are which 
+invert %>% filter(HiLo == "Hi") %>% distinct(Site)
+
+```
+
