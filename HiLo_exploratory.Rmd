@@ -52,26 +52,38 @@ all.data
 
 ## Data visualization
 
-Hi vs Lo (Log10 Biomass)
-```{r, echo=FALSE}
+Hi vs Lo 
 
-# Plot Hi vs Lo biomass
+```{r, echo=FALSE}
+ggplot(data = invert) + geom_point(aes(HiLo, Invert_Biomass, colour = HiLo, alpha = 1.4), position = position_jitter(w = 0.05, h = 0), size = 4, show.legend = F) +
+  scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
+```
+
+
+Hi vs Lo (Log10 Biomass)
+
+```{r, echo=FALSE}
 ggplot(data = invert) + geom_point(aes(HiLo, log10(Invert_Biomass), colour = HiLo, alpha = 1.4), position = position_jitter(w = 0.05, h = 0), size = 4, show.legend = F) +
   scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
 ```
 
-Plot biomass at each quad depth overall
+Biomass at each quad depth overall
+
 ```{r, echo=FALSE}
 ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = Quadrat), position = position_jitter(w = 0.05, h = 0), size = 3, show.legend = F) +
    scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
 ```
+
 Biomass at quad depth by site
+
 ```{r, echo=FALSE}
 ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = Quadrat),position = position_jitter(w = 0.05, h = 0), size = 3, show.legend = F) +
    scale_color_fish_d(option = "Sparisoma_viride", direction = -1) +
   facet_wrap(~ Site, nrow = 3)
 ```
+
 Biomass at quad depth by site coloured by Hi Lo
+
 ```{r, echo=FALSE}
 ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = HiLo), size = 3, show.legend = F) +
    scale_color_fish_d(option = "Sparisoma_viride", direction = -1) +
@@ -109,29 +121,38 @@ ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = HiLo), 
 ## Plots of biomass vs current speed
 
 Biomass vs current speed coloured by hi lo
+
+```{r, echo=FALSE}
+
+ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, Invert_Biomass, colour = HiLo, alpha = 2), size = 4, show.legend = T) +
+  scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
+```
+
+Log10Biomass vs current speed coloured by hi lo
+
 ```{r, echo=FALSE}
 
 ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, log10(Invert_Biomass), colour = HiLo, alpha = 2), size = 4, show.legend = T) +
   scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
 ```
-Log10 Biomass vs current speed coloured by hi lo
-```{r, echo=FALSE}
 
-ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, log10(Invert_Biomass), colour = HiLo, alpha = 2), size = 4, show.legend = F) +
-  scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
-```
 Biomass vs current speed coloured by quadrat
+
 ```{r, echo=FALSE}
 ggplot(all.data) + geom_point(aes(AvgDailMaxCurr, Invert_Biomass, colour = Quadrat, alpha = 2), size = 4) +
    scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
 ```
+
 Biomass vs rock cover
+
 ```{r, echo=FALSE}
 ggplot(all.data) + geom_point(aes(AvgRkCov, Invert_Biomass, colour = Quadrat), size = 4) +
     scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
 
 ```
+
 Biomass vs Slope
+
 ```{r, echo=FALSE}
 ggplot(all.data) + geom_point(aes(SlopeAngle, Invert_Biomass, colour = Quadrat), size = 4) +
     scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
