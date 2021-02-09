@@ -16,7 +16,7 @@ The study uses 14 sites, 7 “high” current sites and 7 “low” current
 sites. At each site Sharon collected invert data in 9 quadrats that are
 seperated into 3 depths (10, 30 and 50 ft depth). There is no repeat
 sampling so there are a total of 126 data points (14sites\*9quadrats).
-However, because there are multiple collections at each site, a mized
+However, because there are multiple collections at each site, a mixed
 effects model is necessary to account for replciation at the site level.
 I don’t think that we need to nest transect within site because I think
 that each transect was at 1 depth (need to confirm this with Sharon) and
