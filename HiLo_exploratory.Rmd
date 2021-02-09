@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(fishualize)
 library(nlme)
+library(lme4)
 library(bbmle)
 
 invert <- read_csv("HiLoData_forFiona.csv")
@@ -51,25 +52,27 @@ all.data
 
 ## Data visualization
 
-```{r pressure, echo=FALSE}
+Hi vs Lo (Log10 Biomass)
+```{r, echo=FALSE}
 
 # Plot Hi vs Lo biomass
-ggplot(data = invert) + geom_point(aes(HiLo, Invert_Biomass, colour = HiLo, alpha = 1.4), size = 4, show.legend = F) +
+ggplot(data = invert) + geom_point(aes(HiLo, log10(Invert_Biomass), colour = HiLo, alpha = 1.4), position = position_jitter(w = 0.05, h = 0), size = 4, show.legend = F) +
   scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
+```
 
-#Plot biomass at each quad depth overall
-
-ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = Quadrat), size = 3, show.legend = F) +
+Plot biomass at each quad depth overall
+```{r, echo=FALSE}
+ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = Quadrat), position = position_jitter(w = 0.05, h = 0), size = 3, show.legend = F) +
    scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
-
-# plot biomass at quad depth by site
-
-ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = Quadrat), size = 3, show.legend = F) +
+```
+Biomass at quad depth by site
+```{r, echo=FALSE}
+ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = Quadrat),position = position_jitter(w = 0.05, h = 0), size = 3, show.legend = F) +
    scale_color_fish_d(option = "Sparisoma_viride", direction = -1) +
   facet_wrap(~ Site, nrow = 3)
-
-# plot biomass at quad depth by site coloured by Hi Lo
-
+```
+Biomass at quad depth by site coloured by Hi Lo
+```{r, echo=FALSE}
 ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = HiLo), size = 3, show.legend = F) +
    scale_color_fish_d(option = "Sparisoma_viride", direction = -1) +
   facet_wrap(~ Site, nrow = 3)
@@ -78,16 +81,15 @@ ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = HiLo), 
 
 ## Same plots but looking at % invert cover instead of biomass
 
-
-```{r pressure, echo=FALSE}
+```{r, echo=FALSE}
 
 # Plot Hi vs Lo percent
-ggplot(data = invert) + geom_point(aes(HiLo, Invert_percent, colour = HiLo, alpha = 2), size = 4, show.legend = F) +
+ggplot(data = invert) + geom_point(aes(HiLo, Invert_percent, colour = HiLo, alpha = 2), position = position_jitter(w = 0.05, h = 0), size = 4, show.legend = F) +
   scale_color_fish_d(option = "Gramma_loreto", direction = -1)
 
 #Plot percent at each quad depth overall
 
-ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = Quadrat), size = 3, show.legend = F) +
+ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = Quadrat), position = position_jitter(w = 0.05, h = 0), size = 3, show.legend = F) +
    scale_color_fish_d(option = "Gramma_loreto", direction = -1)
 
 # plot percent at quad depth by site
@@ -106,114 +108,145 @@ ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = HiLo), 
 
 ## Plots of biomass vs current speed
 
+Biomass vs current speed coloured by hi lo
 ```{r, echo=FALSE}
 
-# Plot biomass vs current speed coloured by hi lo
-ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, Invert_Biomass, colour = HiLo, alpha = 2), size = 4, show.legend = F) +
+ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, log10(Invert_Biomass), colour = HiLo, alpha = 2), size = 4, show.legend = T) +
   scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
+```
+Log10 Biomass vs current speed coloured by hi lo
+```{r, echo=FALSE}
 
-# plot of biomass vs current speed coloured by quadrat
-
+ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, log10(Invert_Biomass), colour = HiLo, alpha = 2), size = 4, show.legend = F) +
+  scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
+```
+Biomass vs current speed coloured by quadrat
+```{r, echo=FALSE}
 ggplot(all.data) + geom_point(aes(AvgDailMaxCurr, Invert_Biomass, colour = Quadrat, alpha = 2), size = 4) +
    scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
-
-# plot of biomass vs rock cover
-
+```
+Biomass vs rock cover
+```{r, echo=FALSE}
 ggplot(all.data) + geom_point(aes(AvgRkCov, Invert_Biomass, colour = Quadrat), size = 4) +
     scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
 
 ```
+Biomass vs Slope
+```{r, echo=FALSE}
+ggplot(all.data) + geom_point(aes(SlopeAngle, Invert_Biomass, colour = Quadrat), size = 4) +
+    scale_color_fish_d(option = "Sparisoma_viride", direction = -1)
 
+```
 
 ## mixed-effect models
 
-```{r, include = FALSE}
+```{r, include = TRUE}
 head(all.data)
 glimpse(all.data)
 
 # using max current speed, fitting a random effect for site
 
 #single variable
-Null <- lme(Invert_Biomass ~ 1, 
+Null <- lme(log10(Invert_Biomass) ~ 1, 
             random = ~ 1 | Site, data = all.data)
 
-Lm1 <-  lme(Invert_Biomass ~ AvgDailMaxCurr, 
+Lm1 <-  lme(log10(Invert_Biomass) ~ HiLo, 
             random = ~ 1 | Site, data = all.data)
 
-Lm2  <- lme(Invert_Biomass ~ Quadrat, 
+Lm2  <- lme(log10(Invert_Biomass) ~ Quadrat, 
             random = ~ 1 | Site, data = all.data)
 
-Lm3 <- lme(Invert_Biomass ~ SlopeAngle, 
+Lm3 <- lme(log10(Invert_Biomass) ~ SlopeAngle, 
             random = ~ 1 | Site, data = all.data)
 
-Lm4 <-  lme(Invert_Biomass ~ AvgRkCov,
+Lm4 <-  lme(log10(Invert_Biomass) ~ AvgRkCov,
+            random = ~ 1 | Site, data = all.data)
+
+Lm5 <-  lme(log10(Invert_Biomass) ~ AvgDailMaxCurr, 
             random = ~ 1 | Site, data = all.data)
 
 #two variables
-Lm5 <- lme(Invert_Biomass ~ AvgDailMaxCurr + Quadrat, 
+Lm5b <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat, 
             random = ~ 1 | Site, data = all.data)
 
-Lm6 <- lme(Invert_Biomass ~ AvgDailMaxCurr + SlopeAngle, 
+Lm6 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + SlopeAngle, 
             random = ~ 1 | Site, data = all.data)
 
-Lm7 <- lme(Invert_Biomass ~ AvgDailMaxCurr + AvgRkCov, 
+Lm7 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + AvgRkCov, 
             random = ~ 1 | Site, data = all.data)
 
-Lm8 <- lme(Invert_Biomass ~ Quadrat + SlopeAngle, 
+Lm8 <- lme(log10(Invert_Biomass) ~ Quadrat + SlopeAngle, 
             random = ~ 1 | Site, data = all.data)
 
-Lm9 <- lme(Invert_Biomass ~ Quadrat + AvgRkCov, 
+Lm9 <- lme(log10(Invert_Biomass) ~ Quadrat + AvgRkCov, 
             random = ~ 1 | Site, data = all.data)
 
-Lm10 <-  lme(Invert_Biomass ~ SlopeAngle + AvgRkCov, 
+Lm10 <-  lme(log10(Invert_Biomass) ~ SlopeAngle + AvgRkCov, 
             random = ~ 1 | Site, data = all.data)
 
 #three variables
 
-Lm11 <- lme(Invert_Biomass ~ AvgDailMaxCurr + Quadrat, 
+Lm11 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat, 
             random = ~ 1 | Site, data = all.data)
 
-Lm12 <- lme(Invert_Biomass ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
+Lm12 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
             random = ~ 1 | Site, data = all.data)
 
-Lm13 <- lme(Invert_Biomass ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
+Lm13 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
             random = ~ 1 | Site, data = all.data)
 
-Lm14 <- lme(Invert_Biomass ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov, 
+Lm14 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov, 
             random = ~ 1 | Site, data = all.data)
 
-Lm15 <- lme(Invert_Biomass ~ Quadrat + SlopeAngle + AvgRkCov, 
+Lm15 <- lme(log10(Invert_Biomass) ~ Quadrat + SlopeAngle + AvgRkCov, 
             random = ~ 1 | Site, data = all.data)
 
 # four variables
 
-Lm16 <- lme(Invert_Biomass ~ AvgDailMaxCurr + Quadrat + SlopeAngle + AvgRkCov, 
+Lm16 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle + AvgRkCov, 
             random = ~ 1 | Site, data = all.data)
 
 
 names <- c("Null", "Current", "Depth", "Slope", "Rock")
 
-AICctab(Null, Lm1, Lm2, Lm3, Lm4, mnames=names, base=TRUE, weights=TRUE, logLik=TRUE)
+AICtab(Null, Lm1, Lm2, Lm3, Lm4, Lm5, Lm6, Lm7, Lm8,Lm9, Lm10, Lm11, Lm12, Lm13, Lm14, Lm15, Lm16, base=TRUE, weights=TRUE, logLik=TRUE)
 
-## let's look at Lm3 in more detail and look at the diagnostics
+AICctab(Null, Lm1, Lm2, Lm3, Lm4, Lm5, base=TRUE, weights=TRUE, logLik=TRUE)
+
+## let's look at Lm1 in more detail and look at the diagnostics
 # model summary
-Lm3
+Lm1
 
-# this doesn't look great, there is a very obvious cone shape 
-plot(Lm3)
+plot(Lm1)
 
 #another way to plot this with ggplot
-ggplot(data.frame(biomass=predict(Lm3,type="link"),pearson=residuals(Lm3,type="pearson")),
+ggplot(data.frame(biomass=predict(Lm1,type="link"),pearson=residuals(Lm1,type="pearson")),
        aes(x=biomass,y=pearson)) +
   geom_point() +
   theme_bw()
 
 #qqnorm plot not great, not terrible, could try and add a variance structure or log transform biomass
 
-qqnorm(residuals(Lm3))
+qqnorm(residuals(Lm1))
 
 # variables to include as fixed effects are current speed, depth, Average rock cover
-
-
 ```
 
+Testing with Lme4 because I am confused
+
+``` {r} 
+# testing with lme4 because I am very confused 
+
+Null <- lmer(log10(Invert_Biomass) ~ 1 + (1|Site), data = all.data)
+
+lmer1 <- lmer(log10(Invert_Biomass) ~ HiLo + (1|Site), data = all.data)
+
+lmer2 <- lmer(log10(Invert_Biomass) ~ AvgDailMaxCurr + (1|Site), data = all.data)
+
+lmer3 <- lmer(log10(Invert_Biomass) ~ AvgRkCov + (1|Site), data = all.data)
+
+lmer4 <-  lmer(log10(Invert_Biomass) ~ Quadrat + (1|Site), data = all.data)
+
+lmer5 <-  lmer(log10(Invert_Biomass) ~ SlopeAngle + (1|Site), data = all.data)
+
+AICtab(Null, lmer1, lmer2, lmer3, lmer4, lmer5, base=TRUE, weights=TRUE, logLik=TRUE)
