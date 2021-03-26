@@ -129,103 +129,104 @@ glimpse(all.data)
 
 ``` r
 # using max current speed, fitting a random effect for site
+# need to specify using ML instead of REML. Here is the logic from talking to Dave Iles a statistician at Environment Canada. "I think this is happening because restricted maximum likelihood (REML) is being used to fit the models, rather than ML.  Annoyingly, REML is the default method for fitting mixed-effect models in both the lme4 and nlme packages - and ML needs to be explicitly specified to fit and compare models with the same random effect structure but different fixed effects."
 
 #single variable
 Null <- lme(log10(Invert_Biomass) ~ 1, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm1 <-  lme(log10(Invert_Biomass) ~ HiLo, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm2  <- lme(log10(Invert_Biomass) ~ Quadrat, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm3 <- lme(log10(Invert_Biomass) ~ SlopeAngle, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm4 <-  lme(log10(Invert_Biomass) ~ AvgRkCov,
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm5 <-  lme(log10(Invert_Biomass) ~ AvgDailMaxCurr, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 #two variables
-Lm5b <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat, 
-            random = ~ 1 | Site, data = all.data)
+Lm5 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm6 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + SlopeAngle, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm7 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm8 <- lme(log10(Invert_Biomass) ~ Quadrat + SlopeAngle, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm9 <- lme(log10(Invert_Biomass) ~ Quadrat + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm10 <-  lme(log10(Invert_Biomass) ~ SlopeAngle + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 #three variables
 
 Lm11 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm12 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm13 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm14 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm15 <- lme(log10(Invert_Biomass) ~ Quadrat + SlopeAngle + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 # four variables
 
 Lm16 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 
-names <- c("Null", "Current", "Depth", "Slope", "Rock")
+names <- c("Null", "Current", "Depth", "Slope", "Rock", "ContCurrent")
 
 AICtab(Null, Lm1, Lm2, Lm3, Lm4, Lm5, Lm6, Lm7, Lm8,Lm9, Lm10, Lm11, Lm12, Lm13, Lm14, Lm15, Lm16, base=TRUE, weights=TRUE, logLik=TRUE)
 ```
 
     ##      logLik AIC    dLogLik dAIC   df weight
-    ## Lm1  -122.1  252.2    6.5     0.0 4  0.5688
-    ## Null -123.8  253.5    4.9     1.3 3  0.2981
-    ## Lm5  -124.6  257.1    4.1     4.9 4  0.0490
-    ## Lm3  -125.0  258.1    3.6     5.8 4  0.0309
-    ## Lm2  -124.1  258.3    4.5     6.1 5  0.0273
-    ## Lm4  -126.2  260.3    2.5     8.1 4  0.0098
-    ## Lm11 -125.0  261.9    3.7     9.7 6  0.0045
-    ## Lm6  -126.0  262.0    2.6     9.8 5  0.0042
-    ## Lm8  -125.4  262.8    3.2    10.6 6  0.0028
-    ## Lm10 -127.0  263.9    1.7    11.7 5  0.0017
-    ## Lm7  -127.2  264.4    1.4    12.2 5  0.0013
-    ## Lm9  -126.6  265.1    2.1    12.9 6  <0.001
-    ## Lm12 -126.4  266.8    2.2    14.6 7  <0.001
-    ## Lm14 -128.3  268.5    0.4    16.3 6  <0.001
-    ## Lm15 -127.3  268.7    1.3    16.5 7  <0.001
-    ## Lm13 -127.6  269.2    1.0    17.0 7  <0.001
-    ## Lm16 -128.7  273.3    0.0    21.1 8  <0.001
+    ## Lm12 -114.0  242.0    8.9     0.0 7  0.2553
+    ## Lm6  -116.2  242.3    6.7     0.3 5  0.2221
+    ## Lm16 -113.4  242.8    9.5     0.8 8  0.1712
+    ## Lm14 -115.6  243.1    7.3     1.1 6  0.1489
+    ## Lm5  -116.5  244.9    6.4     2.9 6  0.0597
+    ## Lm11 -116.5  244.9    6.4     2.9 6  0.0597
+    ## Lm13 -116.3  246.6    6.6     4.6 7  0.0259
+    ## Lm7  -118.4  246.9    4.4     4.9 5  0.0226
+    ## Lm8  -118.6  249.1    4.3     7.1 6  0.0074
+    ## Lm3  -120.7  249.4    2.2     7.4 4  0.0064
+    ## Lm1  -120.8  249.6    2.1     7.6 4  0.0058
+    ## Lm15 -118.0  249.9    4.9     7.9 7  0.0049
+    ## Lm10 -120.1  250.2    2.8     8.2 5  0.0042
+    ## Lm2  -120.7  251.5    2.1     9.5 5  0.0022
+    ## Null -122.9  251.8    0.0     9.7 3  0.0020
+    ## Lm9  -120.6  253.2    2.3    11.2 6  <0.001
+    ## Lm4  -122.8  253.5    0.1    11.5 4  <0.001
 
 ``` r
 AICctab(Null, Lm1, Lm2, Lm3, Lm4, Lm5, base=TRUE, weights=TRUE, logLik=TRUE)
 ```
 
     ##      logLik AICc   dLogLik dAICc  df weight
-    ## Lm1  -122.1  252.6    4.1     0.0 4  0.5675
-    ## Null -123.8  253.7    2.4     1.2 3  0.3180
-    ## Lm5  -124.6  257.5    1.6     4.9 4  0.0489
-    ## Lm3  -125.0  258.4    1.1     5.8 4  0.0308
-    ## Lm2  -124.1  258.8    2.0     6.2 5  0.0250
-    ## Lm4  -126.2  260.7    0.0     8.1 4  0.0098
+    ## Lm5  -116.5  245.6    6.4     0.0 6  0.743 
+    ## Lm3  -120.7  249.7    2.2     4.1 4  0.096 
+    ## Lm1  -120.8  249.9    2.1     4.3 4  0.087 
+    ## Null -122.9  252.0    0.0     6.3 3  0.031 
+    ## Lm2  -120.7  252.0    2.1     6.4 5  0.031 
+    ## Lm4  -122.8  253.9    0.1     8.2 4  0.012
 
 ``` r
 ## let's look at Lm1 in more detail and look at the diagnostics
@@ -233,9 +234,9 @@ AICctab(Null, Lm1, Lm2, Lm3, Lm4, Lm5, base=TRUE, weights=TRUE, logLik=TRUE)
 Lm1
 ```
 
-    ## Linear mixed-effects model fit by REML
+    ## Linear mixed-effects model fit by maximum likelihood
     ##   Data: all.data 
-    ##   Log-restricted-likelihood: -122.1112
+    ##   Log-likelihood: -120.7999
     ##   Fixed: log10(Invert_Biomass) ~ HiLo 
     ## (Intercept)      HiLoLo 
     ##   3.9140029  -0.6216487 
@@ -243,7 +244,7 @@ Lm1
     ## Random effects:
     ##  Formula: ~1 | Site
     ##         (Intercept)  Residual
-    ## StdDev:   0.5382726 0.5626125
+    ## StdDev:   0.4932768 0.5626125
     ## 
     ## Number of Observations: 126
     ## Number of Groups: 14

@@ -4,11 +4,13 @@ author: "Fiona Francis"
 date: "2/8/2021"
 output: github_document
 ---
-This analysis is for Sharon Jeffrey and is part of an overall project looking at the effect of curret speed on fish and invertebrate communities at different sites in the Straight of Georgia. Jillian Campbell's MSc analysis was also a component of this project. 
+This analysis is for Sharon Jeffrey and is part of an overall project looking at the effect of current speed on fish and invertebrate communities at different sites in the Straight of Georgia. Jillian Campbell's MSc analysis was also a component of this project. 
 
 Sharon is interested in using a mixed-effects model to look at how different factors including site current speed, depth and substrate type affect invert biomass and invert % cover. 
 
 The study uses 14 sites, 7 "high" current sites and 7 "low" current sites. At each site Sharon collected invert data in 9 quadrats that are seperated into 3 depths (10, 30 and 50 ft depth). There is no repeat sampling so there are a total of 126 data points (14sites*9quadrats). However, because there are multiple collections at each site, a mixed effects model is necessary to account for replciation at the site level. I don't think that we need to nest transect within site because I think that each transect was at 1 depth (need to confirm this with Sharon) and so depth is already being included as a fixed effect and accounting for this replication (We need to worry about transect if they were run perpendicular to shore (i.e. from 10 to 50 m)).
+
+For substrate, substrate 1 is >60% of quadrat and the codes are as follows: Substrate Codes: 1=Bedrock Smooth, 2=Bedrock w crevices, 3=Boulders, 4=Cobble, 5=Gravel, 6=Pea Gravel, 7=Sand, 9=Mud, 0=Wood/Bark, 10=Crushed Shell, 11=Whole/Chunk Shell
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -139,14 +141,14 @@ ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, log10(Invert_Biomass), 
 Biomass vs current speed coloured by quadrat
 
 ```{r, echo=FALSE}
-ggplot(all.data) + geom_point(aes(AvgDailMaxCurr, Invert_Biomass, colour = Quadrat, alpha = 2), size = 4) +
+ggplot(all.data) + geom_point(aes(AvgDailMaxCurr, log10(Invert_Biomass), colour = Quadrat, alpha = 2), size = 4) +
    scale_color_fish_d(option = "Sparisoma_viride", direction = 1)
 ```
 
 Biomass vs rock cover
 
 ```{r, echo=FALSE}
-ggplot(all.data) + geom_point(aes(AvgRkCov, Invert_Biomass, colour = Quadrat), size = 4) +
+ggplot(all.data) + geom_point(aes(AvgRkCov, log10(Invert_Biomass), colour = Quadrat), size = 4) +
     scale_color_fish_d(option = "Sparisoma_viride", direction = 1)
 
 ```
@@ -159,6 +161,21 @@ ggplot(all.data) + geom_point(aes(SlopeAngle, Invert_Biomass, colour = Quadrat),
 
 ```
 
+
+Plot of fixed effects against each other
+
+Avg rock and slope are at the site level
+```{r, echo=FALSE}
+ggplot(all.data) + geom_point(aes(SlopeAngle, AvgRkCov, colour = Quadrat), size = 4) +
+    scale_color_fish_d(option = "Sparisoma_viride", direction = 1)
+
+ggplot(all.data) + geom_point(aes(SlopeAngle, AvgDailMaxCurr, colour = Quadrat), size = 4) +
+    scale_color_fish_d(option = "Sparisoma_viride", direction = 1)
+
+ggplot(all.data) + geom_point(aes(AvgRkCov, AvgDailMaxCurr, colour = Quadrat), size = 4) +
+    scale_color_fish_d(option = "Sparisoma_viride", direction = 1)
+
+```
 ## mixed-effect models
 
 ```{r, include = TRUE}
@@ -166,96 +183,98 @@ head(all.data)
 glimpse(all.data)
 
 # using max current speed, fitting a random effect for site
+# need to specify using ML instead of REML. Here is the logic from talking to Dave Iles a statistician at Environment Canada. "I think this is happening because restricted maximum likelihood (REML) is being used to fit the models, rather than ML.  Annoyingly, REML is the default method for fitting mixed-effect models in both the lme4 and nlme packages - and ML needs to be explicitly specified to fit and compare models with the same random effect structure but different fixed effects."
 
 #single variable
 Null <- lme(log10(Invert_Biomass) ~ 1, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm1 <-  lme(log10(Invert_Biomass) ~ HiLo, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm2  <- lme(log10(Invert_Biomass) ~ Quadrat, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm3 <- lme(log10(Invert_Biomass) ~ SlopeAngle, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm4 <-  lme(log10(Invert_Biomass) ~ AvgRkCov,
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 Lm5 <-  lme(log10(Invert_Biomass) ~ AvgDailMaxCurr, 
-            random = ~ 1 | Site, data = all.data)
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
 
 #two variables
-Lm5b <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat, 
-            random = ~ 1 | Site, data = all.data)
+Lm6 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm6 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + SlopeAngle, 
-            random = ~ 1 | Site, data = all.data)
+Lm7 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm7 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+Lm8 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm8 <- lme(log10(Invert_Biomass) ~ Quadrat + SlopeAngle, 
-            random = ~ 1 | Site, data = all.data)
+Lm9 <- lme(log10(Invert_Biomass) ~ Quadrat + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm9 <- lme(log10(Invert_Biomass) ~ Quadrat + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+Lm10 <- lme(log10(Invert_Biomass) ~ Quadrat + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm10 <-  lme(log10(Invert_Biomass) ~ SlopeAngle + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+Lm11 <-  lme(log10(Invert_Biomass) ~ SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 #three variables
 
-Lm11 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat, 
-            random = ~ 1 | Site, data = all.data)
+Lm12 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm12 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
-            random = ~ 1 | Site, data = all.data)
+Lm13 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm13 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+Lm14 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm14 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+Lm15 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm15 <- lme(log10(Invert_Biomass) ~ Quadrat + SlopeAngle + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+Lm16 <- lme(log10(Invert_Biomass) ~ Quadrat + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 # four variables
 
-Lm16 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle + AvgRkCov, 
-            random = ~ 1 | Site, data = all.data)
+Lm17 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
 
 
-names <- c("Null", "Current", "Depth", "Slope", "Rock")
+names <- c("Null", "Current", "Depth", "Slope", "Rock", "ContCurrent")
 
-AICtab(Null, Lm1, Lm2, Lm3, Lm4, Lm5, Lm6, Lm7, Lm8,Lm9, Lm10, Lm11, Lm12, Lm13, Lm14, Lm15, Lm16, base=TRUE, weights=TRUE, logLik=TRUE)
+AICtab(Null, Lm1, Lm2, Lm3, Lm4, Lm5, Lm6, Lm7, Lm8,Lm9, Lm10, Lm11, Lm12, Lm13, Lm14, Lm15, Lm16, Lm17, base=TRUE, weights=TRUE, logLik=TRUE)
 
-AICctab(Null, Lm1, Lm2, Lm3, Lm4, Lm5, base=TRUE, weights=TRUE, logLik=TRUE)
+AICctab(Null, Lm1, Lm2, Lm3, Lm4, Lm5,Lm5b, base=TRUE, weights=TRUE, logLik=TRUE)
 
 ## let's look at Lm1 in more detail and look at the diagnostics
 # model summary
-Lm1
+Lm12
 
-plot(Lm1)
+plot(Lm12)
 
 #another way to plot this with ggplot
-ggplot(data.frame(biomass=predict(Lm1,type="link"),pearson=residuals(Lm1,type="pearson")),
+ggplot(data.frame(biomass=predict(Lm12,type="link"),pearson=residuals(Lm12,type="pearson")),
        aes(x=biomass,y=pearson)) +
   geom_point() +
   theme_bw()
 
 #qqnorm plot not great, not terrible, could try and add a variance structure or log transform biomass
 
-qqnorm(residuals(Lm1))
+qqnorm(residuals(Lm12))
 
 # variables to include as fixed effects are current speed, depth, Average rock cover
 ```
 
 Testing with Lme4 because I am confused
 
-``` {r} 
+``` {r lme4, include = F} 
 # testing with lme4 because I am very confused 
 
 Null <- lmer(log10(Invert_Biomass) ~ 1 + (1|Site), data = all.data)
