@@ -16,7 +16,7 @@ For substrate, substrate 1 is >60% of quadrat and the codes are as follows: Subs
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Loading Data
+## Looking at response data distributions
 
 ```{r, include = FALSE}
 library(tidyverse)
@@ -24,6 +24,7 @@ library(fishualize)
 library(nlme)
 library(lme4)
 library(bbmle)
+library(ggeffects)
 
 invert <- read_csv("HiLoData_forFiona.csv")
 site_info <- read_csv("sitelevel_data.csv")
@@ -52,7 +53,17 @@ print(all.data, n = 60)
 all.data
 ```
 
-## Data visualization
+```{r, echo = F}
+# biomass distribution
+
+hist(all.data$Invert_Biomass)
+hist(log10(all.data$Invert_Biomass))
+
+hist(all.data$SpRichness_quadrat) # this looks fake hahaha
+
+```
+
+## Data visualization for biomass
 
 Hi vs Lo 
 
@@ -93,33 +104,6 @@ ggplot(data = invert) + geom_point(aes(Quadrat, Invert_Biomass, colour = HiLo), 
 
 ```
 
-## Same plots but looking at % invert cover instead of biomass
-
-```{r, echo=FALSE}
-
-# Plot Hi vs Lo percent
-ggplot(data = invert) + geom_point(aes(HiLo, Invert_percent, colour = HiLo, alpha = 2), position = position_jitter(w = 0.05, h = 0), size = 4, show.legend = F) +
-  scale_color_fish_d(option = "Gramma_loreto", direction = 1)
-
-#Plot percent at each quad depth overall
-
-ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = Quadrat), position = position_jitter(w = 0.05, h = 0), size = 3, show.legend = F) +
-   scale_color_fish_d(option = "Gramma_loreto", direction = 1)
-
-# plot percent at quad depth by site
-
-ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = Quadrat), size = 3, show.legend = F) +
-   scale_color_fish_d(option = "Gramma_loreto", direction = 1) +
-  facet_wrap(~ Site, nrow = 3)
-
-# plot percent at quad depth by site coloured by Hi Lo
-
-ggplot(data = invert) + geom_point(aes(Quadrat, Invert_percent, colour = HiLo), size = 3, show.legend = F) +
-   scale_color_fish_d(option = "Gramma_loreto", direction = 1) +
-  facet_wrap(~ Site, nrow = 3)
-
-```
-
 ## Plots of biomass vs current speed
 
 Biomass vs current speed coloured by hi lo
@@ -156,7 +140,7 @@ ggplot(all.data) + geom_point(aes(AvgRkCov, log10(Invert_Biomass), colour = Quad
 Biomass vs Slope
 
 ```{r, echo=FALSE}
-ggplot(all.data) + geom_point(aes(SlopeAngle, Invert_Biomass, colour = Quadrat), size = 4) +
+ggplot(all.data) + geom_point(aes(SlopeAngle, log10(Invert_Biomass), colour = Quadrat), size = 4) +
     scale_color_fish_d(option = "Sparisoma_viride", direction = 1)
 
 ```
@@ -251,42 +235,289 @@ names <- c("Null", "Current", "Depth", "Slope", "Rock", "ContCurrent")
 
 AICtab(Null, Lm1, Lm2, Lm3, Lm4, Lm5, Lm6, Lm7, Lm8,Lm9, Lm10, Lm11, Lm12, Lm13, Lm14, Lm15, Lm16, Lm17, base=TRUE, weights=TRUE, logLik=TRUE)
 
-AICctab(Null, Lm1, Lm2, Lm3, Lm4, Lm5,Lm5b, base=TRUE, weights=TRUE, logLik=TRUE)
 
+Lm13 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm7 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm17 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm15 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+```
+So there are several models within 2 delta AIC units but we can see that current and depth are in all of them so these are clearly important variables. Let's take a closer look at the diagnostics of the top model:
+
+``` {r echo = F}
 ## let's look at Lm1 in more detail and look at the diagnostics
 # model summary
-Lm12
-
-plot(Lm12)
+Lm13
 
 #another way to plot this with ggplot
-ggplot(data.frame(biomass=predict(Lm12,type="link"),pearson=residuals(Lm12,type="pearson")),
+ggplot(data.frame(biomass=predict(Lm13,type="link"),pearson=residuals(Lm12,type="pearson")),
        aes(x=biomass,y=pearson)) +
   geom_point() +
   theme_bw()
 
 #qqnorm plot not great, not terrible, could try and add a variance structure or log transform biomass
 
-qqnorm(residuals(Lm12))
+qqnorm(residuals(Lm13))
 
 # variables to include as fixed effects are current speed, depth, Average rock cover
 ```
+Plotting predictors seperately from Lm13 (current, depth, slope)
+```` {r plotting , echo = F}
 
-Testing with Lme4 because I am confused
+summary(Lm13)
 
-``` {r lme4, include = F} 
-# testing with lme4 because I am very confused 
+# using ggeffects to pull out preditors for each of the fixed effects seperately
 
-Null <- lmer(log10(Invert_Biomass) ~ 1 + (1|Site), data = all.data)
+#I think I need to make the data frame a data frame not a tibble for this
 
-lmer1 <- lmer(log10(Invert_Biomass) ~ HiLo + (1|Site), data = all.data)
+all.data2 <- as.data.frame(all.data)
 
-lmer2 <- lmer(log10(Invert_Biomass) ~ AvgDailMaxCurr + (1|Site), data = all.data)
+#re-run Lm13 
 
-lmer3 <- lmer(log10(Invert_Biomass) ~ AvgRkCov + (1|Site), data = all.data)
+Lm13 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data2, method = "ML")
 
-lmer4 <-  lmer(log10(Invert_Biomass) ~ Quadrat + (1|Site), data = all.data)
+```
 
-lmer5 <-  lmer(log10(Invert_Biomass) ~ SlopeAngle + (1|Site), data = all.data)
+Current speed
+``` {r current, echo = F}
 
-AICtab(Null, lmer1, lmer2, lmer3, lmer4, lmer5, base=TRUE, weights=TRUE, logLik=TRUE)
+#current
+
+results.current <- ggeffects::ggeffect(Lm13, terms = "AvgDailMaxCurr") #categorical
+
+ggplot() + 
+  geom_line(data = results.current, aes(x = x, y = predicted, group = group), size = 1) +
+  geom_ribbon(data = results.current, aes(x=x, ymin=conf.low, ymax=conf.high), alpha=0.5) +
+  labs(x = "Average Max Current Speed", y = "log10(Biomass)") + 
+  ylim(2.5, 5) +
+  theme_classic()
+```
+
+Depth
+```{r, echo = F}
+#depth
+
+results.depth <- ggeffects::ggpredict(Lm13, terms = "Quadrat") #categorical
+
+ggplot() + 
+  geom_pointrange(data = results.depth, aes(x=x, y=predicted, ymax=conf.high, ymin = conf.low), size =0.6) + 
+  labs(x = "Depth (feet)", y = "log10(Biomass)") +
+  scale_x_discrete(labels=c("Q10" = "10", "Q30" = "30", "Q50" = "50")) +
+  ylim(3, 4) +
+  theme_classic()
+```
+Slope
+``` {r, echo = F}
+
+# slope
+ 
+results.slope <- ggeffects::ggeffect(Lm13, terms = "SlopeAngle")
+
+ggplot() + 
+  geom_line(data = results.slope, aes(x = x, y = predicted, group = group), size = 1) +
+  geom_ribbon(data = results.slope, aes(x=x, ymin=conf.low, ymax=conf.high), alpha=0.5) +
+  scale_color_fish(option = "Sparisoma_viride", direction = 1) +
+  labs(x = "Average Slope (degrees)", y = "log10(Biomass)") + 
+  ylim(2.5, 5) +
+  theme_classic()
+
+```
+
+## Invertebrate Percent Cover
+
+# Same plots but looking at % invert cover instead of biomass
+
+```{r cover ploting, echo=FALSE}
+
+# Plot Hi vs Lo richness
+ggplot(data = all.data) + geom_point(aes(HiLo, SpRichness_quadrat, colour = HiLo, alpha = 2), position = position_jitter(w = 0.05, h = 0), size = 4, show.legend = F) +
+  scale_color_fish_d(option = "Gramma_loreto", direction = 1)
+
+#Plot richness at each quad depth overall
+
+ggplot(data = all.data) + geom_point(aes(Quadrat, SpRichness_quadrat, colour = Quadrat), position = position_jitter(w = 0.05, h = 0), size = 3, show.legend = F) +
+   scale_color_fish_d(option = "Gramma_loreto", direction = 1)
+
+# plot richness at quad depth by site
+
+ggplot(data = all.data) + geom_point(aes(Site, SpRichness_quadrat), size = 3, show.legend = F) +
+   scale_color_fish_d(option = "Gramma_loreto", direction = 1)
+
+# plot richness at quad depth by site coloured by Hi Lo
+
+ggplot(data = all.data) + geom_point(aes(Quadrat, SpRichness_quadrat, colour = HiLo), size = 3, show.legend = F) +
+   scale_color_fish_d(option = "Gramma_loreto", direction = 1) +
+  facet_wrap(~ Site, nrow = 3)
+
+```
+
+Richness vs current
+
+```{r, echo=FALSE}
+
+ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, SpRichness_quadrat, colour = HiLo, alpha = 2), size = 4, show.legend = T) +
+  scale_color_fish_d(option = "Gramma_loreto", direction = 1)
+```
+
+Richness vs current speed
+
+```{r, echo=FALSE}
+
+ggplot(data = all.data) + geom_point(aes(AvgDailMaxCurr, SpRichness_quadrat, colour = Quadrat, alpha = 2), size = 4) +
+   scale_color_fish_d(option = "Gramma_loreto", direction = 1)
+```
+
+Richness vs rock cover
+
+```{r, echo=FALSE}
+ggplot(data = all.data) + geom_point(aes(AvgRkCov, SpRichness_quadrat, colour = Quadrat), size = 4) +
+    scale_color_fish_d(option = "Gramma_loreto", direction = 1)
+
+```
+
+Richness vs Slope
+
+```{r, echo=FALSE}
+ggplot(all.data) + geom_point(aes(SlopeAngle, SpRichness_quadrat, colour = Quadrat), size = 4) +
+    scale_color_fish_d(option = "Gramma_loreto", direction = 1)
+
+```
+
+#Preliminary models for Species Richness
+
+```{r sp richness, include = TRUE}
+head(all.data)
+glimpse(all.data)
+
+# using max current speed, fitting a random effect for site
+# need to specify using ML instead of REML. Here is the logic from talking to Dave Iles a statistician at Environment Canada. "I think this is happening because restricted maximum likelihood (REML) is being used to fit the models, rather than ML.  Annoyingly, REML is the default method for fitting mixed-effect models in both the lme4 and nlme packages - and ML needs to be explicitly specified to fit and compare models with the same random effect structure but different fixed effects."
+
+#single variable
+Null.rich <- lme(SpRichness_quadrat ~ 1, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm1.rich <-  lme(SpRichness_quadrat ~ HiLo, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm2.rich  <- lme(SpRichness_quadrat ~ Quadrat, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm3.rich <- lme(SpRichness_quadrat ~ SlopeAngle, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm4.rich <-  lme(SpRichness_quadrat ~ AvgRkCov,
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm5.rich <-  lme(SpRichness_quadrat ~ AvgDailMaxCurr, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+
+#two variables
+Lm6.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm7.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm8.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm9.rich <- lme(SpRichness_quadrat ~ Quadrat + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm10.rich <- lme(SpRichness_quadrat ~ Quadrat + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm11.rich <-  lme(SpRichness_quadrat ~ SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+#three variables
+
+Lm12.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm13.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm14.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm15.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+Lm16.rich <- lme(SpRichness_quadrat ~ Quadrat + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+# four variables
+
+Lm17.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat + SlopeAngle + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data, method = "ML")
+
+
+names <- c("Null", "Current", "Depth", "Slope", "Rock", "ContCurrent")
+
+AICtab(Null.rich, Lm1.rich, Lm2.rich, Lm3.rich, Lm4.rich, Lm5.rich, Lm6.rich, Lm7.rich, Lm8.rich,Lm9.rich, Lm10.rich, Lm11.rich, Lm12.rich, Lm13.rich, Lm14.rich, Lm15.rich, Lm16.rich, Lm17.rich, base=TRUE, weights=TRUE, logLik=TRUE)
+
+
+Lm14.rich
+
+plot(Lm14.rich) # looks good
+
+qqnorm(resid(Lm14.rich)) # looks good
+
+```
+
+Plotting individual predictors from Lm14
+``` {r current, echo = F}
+
+Lm14.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
+            random = ~ 1 | Site, data = all.data2, method = "ML")
+
+
+results.current.rich <- ggeffects::ggeffect(Lm14.rich, terms = "AvgDailMaxCurr") #continuous
+
+ggplot() + 
+  geom_line(data = results.current.rich, aes(x = x, y = predicted, group = group), size = 1) +
+  geom_ribbon(data = results.current.rich, aes(x=x, ymin=conf.low, ymax=conf.high), alpha=0.5) +
+  labs(x = "Average Max Current Speed", y = "Species Richness") +
+  theme_classic()
+
+```
+
+Depth
+```{r, echo = F}
+#depth
+
+results.depth.rich <- ggeffects::ggpredict(Lm14.rich, terms = "Quadrat") #categorical
+
+ggplot() + 
+  geom_pointrange(data = results.depth.rich, aes(x=x, y=predicted, ymax=conf.high, ymin = conf.low), size =0.6) + 
+  labs(x = "Depth (feet)", y = "Species Richness") +
+  scale_x_discrete(labels=c("Q10" = "10", "Q30" = "30", "Q50" = "50")) +
+  theme_classic()
+```
+
+Rock Cover
+``` {r, echo = F}
+
+# slope
+ 
+results.rock.rich <- ggeffects::ggeffect(Lm14.rich, terms = "AvgRkCov")
+
+ggplot() + 
+  geom_line(data = results.rock.rich, aes(x = x, y = predicted, group = group), size = 1) +
+  geom_ribbon(data = results.rock.rich, aes(x=x, ymin=conf.low, ymax=conf.high), alpha=0.5) +
+  scale_color_fish(option = "Sparisoma_viride", direction = 1) +
+  labs(x = "Average Slope (degrees)", y = "Species Richness") + 
+  theme_classic()
+
+```
+
