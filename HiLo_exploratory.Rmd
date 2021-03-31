@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Looking at response data distributions
 
+Biomass
 ```{r, include = FALSE}
 library(tidyverse)
 library(fishualize)
@@ -54,10 +55,16 @@ all.data
 ```
 
 ```{r, echo = F}
-# biomass distribution
-
 hist(all.data$Invert_Biomass)
+```
+
+Log10 Biomass. Nice and normal looking
+``` {r, echo = F}
 hist(log10(all.data$Invert_Biomass))
+```
+
+Species Richness - textbook normal looking :) 
+```{r, echo = F}
 
 hist(all.data$SpRichness_quadrat) # this looks fake hahaha
 
@@ -268,6 +275,7 @@ qqnorm(residuals(Lm13))
 
 # variables to include as fixed effects are current speed, depth, Average rock cover
 ```
+
 Plotting predictors seperately from Lm13 (current, depth, slope)
 ```` {r plotting , echo = F}
 
@@ -287,7 +295,7 @@ Lm13 <- lme(log10(Invert_Biomass) ~ AvgDailMaxCurr + Quadrat + SlopeAngle,
 ```
 
 Current speed
-``` {r current, echo = F}
+``` {r, echo = F}
 
 #current
 
@@ -331,9 +339,9 @@ ggplot() +
 
 ```
 
-## Invertebrate Percent Cover
+# Invertebrate Percent Cover
 
-# Same plots but looking at % invert cover instead of biomass
+## Same plots but looking at % invert cover instead of biomass
 
 ```{r cover ploting, echo=FALSE}
 
@@ -391,7 +399,7 @@ ggplot(all.data) + geom_point(aes(SlopeAngle, SpRichness_quadrat, colour = Quadr
 
 ```
 
-#Preliminary models for Species Richness
+# Preliminary models for species richness
 
 ```{r sp richness, include = TRUE}
 head(all.data)
@@ -475,7 +483,12 @@ qqnorm(resid(Lm14.rich)) # looks good
 
 ```
 
+Again there are several models within 2 AIC so it is very clear that all of these factors are important in predicting species richness. 
+
 Plotting individual predictors from Lm14
+
+Current
+
 ``` {r current, echo = F}
 
 Lm14.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
@@ -493,6 +506,7 @@ ggplot() +
 ```
 
 Depth
+
 ```{r, echo = F}
 #depth
 
@@ -506,6 +520,7 @@ ggplot() +
 ```
 
 Rock Cover
+
 ``` {r, echo = F}
 
 # slope

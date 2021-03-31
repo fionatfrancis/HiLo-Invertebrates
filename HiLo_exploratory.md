@@ -31,108 +31,117 @@ follows: Substrate Codes: 1=Bedrock Smooth, 2=Bedrock w crevices,
 
 ## Looking at response data distributions
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-2-2.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-2-3.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-2-4.png)<!-- -->
+Biomass
+
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+Log10 Biomass. Nice and normal looking
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+Species Richness - textbook normal looking :)
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ## Data visualization for biomass
 
 Hi vs Lo
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 Hi vs Lo (Log10 Biomass)
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 Biomass at each quad depth overall
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 Biomass at quad depth by site
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 Biomass at quad depth by site coloured by Hi Lo
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 ## Plots of biomass vs current speed
 
 Biomass vs current speed coloured by hi lo
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 Log10Biomass vs current speed coloured by hi lo
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 Biomass vs current speed coloured by quadrat
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 Biomass vs rock cover
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 Biomass vs Slope
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 Plot of fixed effects against each other
 
 Avg rock and slope are at the site level
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-13-3.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-15-2.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-15-3.png)<!-- -->
 \#\# mixed-effect models
 
 ``` r
 head(all.data)
 ```
 
-    ## # A tibble: 6 x 24
-    ##   Date  Site  HiLo  Transect Quadrat QuadName Diver_invert Diver_algae
-    ##   <chr> <chr> <chr> <chr>    <chr>   <chr>    <chr>        <chr>      
-    ## 1 26-J~ Buri~ Hi    T1       Q10     Burial_~ sharon       candice    
-    ## 2 26-J~ Buri~ Hi    T1       Q30     Burial_~ sharon       candice    
-    ## 3 26-J~ Buri~ Hi    T1       Q50     Burial_~ sharon       candice    
-    ## 4 26-J~ Buri~ Hi    T2       Q30     Burial_~ candice      sharon     
-    ## 5 26-J~ Buri~ Hi    T2       Q50     Burial_~ candice      sharon     
-    ## 6 27-J~ Buri~ Hi    T2       Q10     Burial_~ candice      sharon     
-    ## # ... with 16 more variables: Invert_percent <dbl>, Invert_Biomass <dbl>,
-    ## #   DominantSp_1 <chr>, DominantSp_2 <chr>, substrate_1 <dbl>,
-    ## #   substrate_1cov <dbl>, substrate2 <dbl>, substrate2cov <dbl>,
-    ## #   substrate3 <dbl>, substrate3cov <dbl>, Comments <chr>, site_length_m <dbl>,
-    ## #   SlopeAngle <dbl>, AvgDailMaxCurr <dbl>, InvertSpRichness <dbl>,
-    ## #   AvgRkCov <dbl>
+    ## # A tibble: 6 x 25
+    ##   Date  Site  HiLo  Transect Quadrat SpRichness_quad~ QuadName Diver_invert
+    ##   <chr> <chr> <chr> <chr>    <chr>              <dbl> <chr>    <chr>       
+    ## 1 10-J~ Anni~ Lo    T1       Q10                   11 Anniver~ sarah       
+    ## 2 10-J~ Anni~ Lo    T1       Q30                   14 Anniver~ sarah       
+    ## 3 10-J~ Anni~ Lo    T1       Q50                   22 Anniver~ sarah       
+    ## 4 10-J~ Anni~ Lo    T2       Q10                    5 Anniver~ sarah       
+    ## 5 10-J~ Anni~ Lo    T2       Q30                   12 Anniver~ sarah       
+    ## 6 10-J~ Anni~ Lo    T2       Q50                   17 Anniver~ sarah       
+    ## # ... with 17 more variables: Diver_algae <chr>, `Invert%` <dbl>,
+    ## #   Invert_Biomass <dbl>, DominantSp_1 <chr>, DominantSp_2 <chr>,
+    ## #   substrate_1 <dbl>, substrate_1cov <dbl>, substrate2 <dbl>,
+    ## #   substrate2cov <dbl>, substrate3 <dbl>, substrate3cov <dbl>, Comments <chr>,
+    ## #   site_length_m <dbl>, SlopeAngle <dbl>, AvgDailMaxCurr <dbl>,
+    ## #   InvertSpRichness <dbl>, AvgRkCov <dbl>
 
 ``` r
 glimpse(all.data)
 ```
 
     ## Rows: 126
-    ## Columns: 24
-    ## $ Date             <chr> "26-Jun", "26-Jun", "26-Jun", "26-Jun", "26-Jun", ...
-    ## $ Site             <chr> "Burial_Is", "Burial_Is", "Burial_Is", "Burial_Is"...
-    ## $ HiLo             <chr> "Hi", "Hi", "Hi", "Hi", "Hi", "Hi", "Hi", "Hi", "H...
-    ## $ Transect         <chr> "T1", "T1", "T1", "T2", "T2", "T2", "T3", "T3", "T...
-    ## $ Quadrat          <chr> "Q10", "Q30", "Q50", "Q30", "Q50", "Q10", "Q10", "...
-    ## $ QuadName         <chr> "Burial_Is_T1Q10", "Burial_Is_T1Q30", "Burial_Is_T...
-    ## $ Diver_invert     <chr> "sharon", "sharon", "sharon", "candice", "candice"...
-    ## $ Diver_algae      <chr> "candice", "candice", "candice", "sharon", "sharon...
-    ## $ Invert_percent   <dbl> 30, 80, 30, 10, 60, 30, 15, 30, 60, 90, 90, 60, 80...
-    ## $ Invert_Biomass   <dbl> 15000, 80000, 6000, 300, 1200, 1800, 150, 1500, 60...
-    ## $ DominantSp_1     <chr> NA, "Metridium farcimen", NA, NA, NA, NA, NA, NA, ...
-    ## $ DominantSp_2     <chr> NA, "Dodecaceria fewksi", NA, NA, NA, NA, NA, NA, ...
-    ## $ substrate_1      <dbl> 2, 1, 5, 2, 2, 2, 2, 2, 2, 3, 1, 3, 3, 1, 1, 1, 2,...
-    ## $ substrate_1cov   <dbl> 80, 50, 70, 100, 100, 100, 100, 100, 100, 90, 80, ...
-    ## $ substrate2       <dbl> 10, 2, 4, NA, NA, NA, NA, NA, NA, 10, 10, 10, 10, ...
-    ## $ substrate2cov    <dbl> 20, 50, 20, NA, NA, NA, NA, NA, NA, 10, 10, 20, 20...
-    ## $ substrate3       <dbl> NA, NA, 7, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, ...
-    ## $ substrate3cov    <dbl> NA, NA, 10, NA, NA, NA, NA, NA, NA, NA, 10, NA, NA...
-    ## $ Comments         <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, "invert % ...
-    ## $ site_length_m    <dbl> 77.704, 77.704, 77.704, 77.704, 77.704, 77.704, 77...
-    ## $ SlopeAngle       <dbl> 8.9, 8.9, 8.9, 8.9, 8.9, 8.9, 8.9, 8.9, 8.9, 14.1,...
-    ## $ AvgDailMaxCurr   <dbl> 109.4, 109.4, 109.4, 109.4, 109.4, 109.4, 109.4, 1...
-    ## $ InvertSpRichness <dbl> 20.6, 20.6, 20.6, 20.6, 20.6, 20.6, 20.6, 20.6, 20...
-    ## $ AvgRkCov         <dbl> 88.9, 88.9, 88.9, 88.9, 88.9, 88.9, 88.9, 88.9, 88...
+    ## Columns: 25
+    ## $ Date               <chr> "10-Jul", "10-Jul", "10-Jul", "10-Jul", "10-Jul"...
+    ## $ Site               <chr> "Anniversary_Is", "Anniversary_Is", "Anniversary...
+    ## $ HiLo               <chr> "Lo", "Lo", "Lo", "Lo", "Lo", "Lo", "Lo", "Lo", ...
+    ## $ Transect           <chr> "T1", "T1", "T1", "T2", "T2", "T2", "T3", "T3", ...
+    ## $ Quadrat            <chr> "Q10", "Q30", "Q50", "Q10", "Q30", "Q50", "Q10",...
+    ## $ SpRichness_quadrat <dbl> 11, 14, 22, 5, 12, 17, 11, 18, 8, 25, 29, 23, 16...
+    ## $ QuadName           <chr> "Anniversary_Is_T1Q10", "Anniversary_Is_T1Q30", ...
+    ## $ Diver_invert       <chr> "sarah", "sarah", "sarah", "sarah", "sarah", "sa...
+    ## $ Diver_algae        <chr> "sharon", "sharon", "sharon", "sharon", "sharon"...
+    ## $ `Invert%`          <dbl> 70, 10, 80, 70, 30, 5, 20, 10, 15, 20, 35, 25, 4...
+    ## $ Invert_Biomass     <dbl> 3500, 100, 4000, 7000, 3000, 500, 200, 30100, 15...
+    ## $ DominantSp_1       <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ DominantSp_2       <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ substrate_1        <dbl> 1, 1, 3, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, ...
+    ## $ substrate_1cov     <dbl> 100, 100, 100, 100, 100, 100, 90, 80, 90, 100, 1...
+    ## $ substrate2         <dbl> NA, NA, NA, NA, NA, NA, 2, 2, 2, NA, NA, NA, NA,...
+    ## $ substrate2cov      <dbl> NA, NA, NA, NA, NA, NA, 10, 20, 10, NA, NA, NA, ...
+    ## $ substrate3         <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ substrate3cov      <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ Comments           <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ site_length_m      <dbl> 21.286, 21.286, 21.286, 21.286, 21.286, 21.286, ...
+    ## $ SlopeAngle         <dbl> 29.7, 29.7, 29.7, 29.7, 29.7, 29.7, 29.7, 29.7, ...
+    ## $ AvgDailMaxCurr     <dbl> 22.5, 22.5, 22.5, 22.5, 22.5, 22.5, 22.5, 22.5, ...
+    ## $ InvertSpRichness   <dbl> 13.1, 13.1, 13.1, 13.1, 13.1, 13.1, 13.1, 13.1, ...
+    ## $ AvgRkCov           <dbl> 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0,...
 
 ``` r
 # using max current speed, fitting a random effect for site
@@ -258,7 +267,8 @@ variables. Let’s take a closer look at the diagnostics of the top model:
     ## Number of Observations: 126
     ## Number of Groups: 14
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-15-2.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
+
 Plotting predictors seperately from Lm13 (current, depth, slope)
 
     ## Linear mixed-effects model fit by maximum likelihood
@@ -293,206 +303,224 @@ Plotting predictors seperately from Lm13 (current, depth, slope)
     ## Number of Groups: 14
 
 Current speed
-![](HiLo_exploratory_files/figure-gfm/current-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 Depth
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 Slope
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
-## Invertebrate Percent Cover
+# Invertebrate Percent Cover
 
-# Same plots but looking at % invert cover instead of biomass
+## Same plots but looking at % invert cover instead of biomass
 
 ![](HiLo_exploratory_files/figure-gfm/cover%20ploting-1.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/cover%20ploting-2.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/cover%20ploting-3.png)<!-- -->![](HiLo_exploratory_files/figure-gfm/cover%20ploting-4.png)<!-- -->
 
-Cover vs current
-
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
-
-Cover vs current speed
-
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
-
-Cover vs rock cover
-
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
-
-Cover vs Slope
+Richness vs current
 
 ![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
-\#Preliminary models for Percent Cover
+Richness vs current speed
+
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+
+Richness vs rock cover
+
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+
+Richness vs Slope
+
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+
+# Preliminary models for species richness
 
 ``` r
 head(all.data)
 ```
 
-    ## # A tibble: 6 x 24
-    ##   Date  Site  HiLo  Transect Quadrat QuadName Diver_invert Diver_algae
-    ##   <chr> <chr> <chr> <chr>    <chr>   <chr>    <chr>        <chr>      
-    ## 1 26-J~ Buri~ Hi    T1       Q10     Burial_~ sharon       candice    
-    ## 2 26-J~ Buri~ Hi    T1       Q30     Burial_~ sharon       candice    
-    ## 3 26-J~ Buri~ Hi    T1       Q50     Burial_~ sharon       candice    
-    ## 4 26-J~ Buri~ Hi    T2       Q30     Burial_~ candice      sharon     
-    ## 5 26-J~ Buri~ Hi    T2       Q50     Burial_~ candice      sharon     
-    ## 6 27-J~ Buri~ Hi    T2       Q10     Burial_~ candice      sharon     
-    ## # ... with 16 more variables: Invert_percent <dbl>, Invert_Biomass <dbl>,
-    ## #   DominantSp_1 <chr>, DominantSp_2 <chr>, substrate_1 <dbl>,
-    ## #   substrate_1cov <dbl>, substrate2 <dbl>, substrate2cov <dbl>,
-    ## #   substrate3 <dbl>, substrate3cov <dbl>, Comments <chr>, site_length_m <dbl>,
-    ## #   SlopeAngle <dbl>, AvgDailMaxCurr <dbl>, InvertSpRichness <dbl>,
-    ## #   AvgRkCov <dbl>
+    ## # A tibble: 6 x 25
+    ##   Date  Site  HiLo  Transect Quadrat SpRichness_quad~ QuadName Diver_invert
+    ##   <chr> <chr> <chr> <chr>    <chr>              <dbl> <chr>    <chr>       
+    ## 1 10-J~ Anni~ Lo    T1       Q10                   11 Anniver~ sarah       
+    ## 2 10-J~ Anni~ Lo    T1       Q30                   14 Anniver~ sarah       
+    ## 3 10-J~ Anni~ Lo    T1       Q50                   22 Anniver~ sarah       
+    ## 4 10-J~ Anni~ Lo    T2       Q10                    5 Anniver~ sarah       
+    ## 5 10-J~ Anni~ Lo    T2       Q30                   12 Anniver~ sarah       
+    ## 6 10-J~ Anni~ Lo    T2       Q50                   17 Anniver~ sarah       
+    ## # ... with 17 more variables: Diver_algae <chr>, `Invert%` <dbl>,
+    ## #   Invert_Biomass <dbl>, DominantSp_1 <chr>, DominantSp_2 <chr>,
+    ## #   substrate_1 <dbl>, substrate_1cov <dbl>, substrate2 <dbl>,
+    ## #   substrate2cov <dbl>, substrate3 <dbl>, substrate3cov <dbl>, Comments <chr>,
+    ## #   site_length_m <dbl>, SlopeAngle <dbl>, AvgDailMaxCurr <dbl>,
+    ## #   InvertSpRichness <dbl>, AvgRkCov <dbl>
 
 ``` r
 glimpse(all.data)
 ```
 
     ## Rows: 126
-    ## Columns: 24
-    ## $ Date             <chr> "26-Jun", "26-Jun", "26-Jun", "26-Jun", "26-Jun", ...
-    ## $ Site             <chr> "Burial_Is", "Burial_Is", "Burial_Is", "Burial_Is"...
-    ## $ HiLo             <chr> "Hi", "Hi", "Hi", "Hi", "Hi", "Hi", "Hi", "Hi", "H...
-    ## $ Transect         <chr> "T1", "T1", "T1", "T2", "T2", "T2", "T3", "T3", "T...
-    ## $ Quadrat          <chr> "Q10", "Q30", "Q50", "Q30", "Q50", "Q10", "Q10", "...
-    ## $ QuadName         <chr> "Burial_Is_T1Q10", "Burial_Is_T1Q30", "Burial_Is_T...
-    ## $ Diver_invert     <chr> "sharon", "sharon", "sharon", "candice", "candice"...
-    ## $ Diver_algae      <chr> "candice", "candice", "candice", "sharon", "sharon...
-    ## $ Invert_percent   <dbl> 30, 80, 30, 10, 60, 30, 15, 30, 60, 90, 90, 60, 80...
-    ## $ Invert_Biomass   <dbl> 15000, 80000, 6000, 300, 1200, 1800, 150, 1500, 60...
-    ## $ DominantSp_1     <chr> NA, "Metridium farcimen", NA, NA, NA, NA, NA, NA, ...
-    ## $ DominantSp_2     <chr> NA, "Dodecaceria fewksi", NA, NA, NA, NA, NA, NA, ...
-    ## $ substrate_1      <dbl> 2, 1, 5, 2, 2, 2, 2, 2, 2, 3, 1, 3, 3, 1, 1, 1, 2,...
-    ## $ substrate_1cov   <dbl> 80, 50, 70, 100, 100, 100, 100, 100, 100, 90, 80, ...
-    ## $ substrate2       <dbl> 10, 2, 4, NA, NA, NA, NA, NA, NA, 10, 10, 10, 10, ...
-    ## $ substrate2cov    <dbl> 20, 50, 20, NA, NA, NA, NA, NA, NA, 10, 10, 20, 20...
-    ## $ substrate3       <dbl> NA, NA, 7, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, ...
-    ## $ substrate3cov    <dbl> NA, NA, 10, NA, NA, NA, NA, NA, NA, NA, 10, NA, NA...
-    ## $ Comments         <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, "invert % ...
-    ## $ site_length_m    <dbl> 77.704, 77.704, 77.704, 77.704, 77.704, 77.704, 77...
-    ## $ SlopeAngle       <dbl> 8.9, 8.9, 8.9, 8.9, 8.9, 8.9, 8.9, 8.9, 8.9, 14.1,...
-    ## $ AvgDailMaxCurr   <dbl> 109.4, 109.4, 109.4, 109.4, 109.4, 109.4, 109.4, 1...
-    ## $ InvertSpRichness <dbl> 20.6, 20.6, 20.6, 20.6, 20.6, 20.6, 20.6, 20.6, 20...
-    ## $ AvgRkCov         <dbl> 88.9, 88.9, 88.9, 88.9, 88.9, 88.9, 88.9, 88.9, 88...
+    ## Columns: 25
+    ## $ Date               <chr> "10-Jul", "10-Jul", "10-Jul", "10-Jul", "10-Jul"...
+    ## $ Site               <chr> "Anniversary_Is", "Anniversary_Is", "Anniversary...
+    ## $ HiLo               <chr> "Lo", "Lo", "Lo", "Lo", "Lo", "Lo", "Lo", "Lo", ...
+    ## $ Transect           <chr> "T1", "T1", "T1", "T2", "T2", "T2", "T3", "T3", ...
+    ## $ Quadrat            <chr> "Q10", "Q30", "Q50", "Q10", "Q30", "Q50", "Q10",...
+    ## $ SpRichness_quadrat <dbl> 11, 14, 22, 5, 12, 17, 11, 18, 8, 25, 29, 23, 16...
+    ## $ QuadName           <chr> "Anniversary_Is_T1Q10", "Anniversary_Is_T1Q30", ...
+    ## $ Diver_invert       <chr> "sarah", "sarah", "sarah", "sarah", "sarah", "sa...
+    ## $ Diver_algae        <chr> "sharon", "sharon", "sharon", "sharon", "sharon"...
+    ## $ `Invert%`          <dbl> 70, 10, 80, 70, 30, 5, 20, 10, 15, 20, 35, 25, 4...
+    ## $ Invert_Biomass     <dbl> 3500, 100, 4000, 7000, 3000, 500, 200, 30100, 15...
+    ## $ DominantSp_1       <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ DominantSp_2       <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ substrate_1        <dbl> 1, 1, 3, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, ...
+    ## $ substrate_1cov     <dbl> 100, 100, 100, 100, 100, 100, 90, 80, 90, 100, 1...
+    ## $ substrate2         <dbl> NA, NA, NA, NA, NA, NA, 2, 2, 2, NA, NA, NA, NA,...
+    ## $ substrate2cov      <dbl> NA, NA, NA, NA, NA, NA, 10, 20, 10, NA, NA, NA, ...
+    ## $ substrate3         <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ substrate3cov      <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ Comments           <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+    ## $ site_length_m      <dbl> 21.286, 21.286, 21.286, 21.286, 21.286, 21.286, ...
+    ## $ SlopeAngle         <dbl> 29.7, 29.7, 29.7, 29.7, 29.7, 29.7, 29.7, 29.7, ...
+    ## $ AvgDailMaxCurr     <dbl> 22.5, 22.5, 22.5, 22.5, 22.5, 22.5, 22.5, 22.5, ...
+    ## $ InvertSpRichness   <dbl> 13.1, 13.1, 13.1, 13.1, 13.1, 13.1, 13.1, 13.1, ...
+    ## $ AvgRkCov           <dbl> 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0,...
 
 ``` r
 # using max current speed, fitting a random effect for site
 # need to specify using ML instead of REML. Here is the logic from talking to Dave Iles a statistician at Environment Canada. "I think this is happening because restricted maximum likelihood (REML) is being used to fit the models, rather than ML.  Annoyingly, REML is the default method for fitting mixed-effect models in both the lme4 and nlme packages - and ML needs to be explicitly specified to fit and compare models with the same random effect structure but different fixed effects."
 
 #single variable
-Null.per <- lme(Invert_percent ~ 1, 
+Null.rich <- lme(SpRichness_quadrat ~ 1, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm1.per <-  lme(Invert_percent ~ HiLo, 
+Lm1.rich <-  lme(SpRichness_quadrat ~ HiLo, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm2.per  <- lme(Invert_percent ~ Quadrat, 
+Lm2.rich  <- lme(SpRichness_quadrat ~ Quadrat, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm3.per <- lme(Invert_percent ~ SlopeAngle, 
+Lm3.rich <- lme(SpRichness_quadrat ~ SlopeAngle, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm4.per <-  lme(Invert_percent ~ AvgRkCov,
+Lm4.rich <-  lme(SpRichness_quadrat ~ AvgRkCov,
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm5.per <-  lme(Invert_percent ~ AvgDailMaxCurr, 
+Lm5.rich <-  lme(SpRichness_quadrat ~ AvgDailMaxCurr, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
 
 #two variables
-Lm6.per <- lme(Invert_percent ~ AvgDailMaxCurr + Quadrat, 
+Lm6.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm7.per <- lme(Invert_percent ~ AvgDailMaxCurr + SlopeAngle, 
+Lm7.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + SlopeAngle, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm8.per <- lme(Invert_percent ~ AvgDailMaxCurr + AvgRkCov, 
+Lm8.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + AvgRkCov, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm9.per <- lme(Invert_percent ~ Quadrat + SlopeAngle, 
+Lm9.rich <- lme(SpRichness_quadrat ~ Quadrat + SlopeAngle, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm10.per <- lme(Invert_percent ~ Quadrat + AvgRkCov, 
+Lm10.rich <- lme(SpRichness_quadrat ~ Quadrat + AvgRkCov, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm11.per <-  lme(Invert_percent ~ SlopeAngle + AvgRkCov, 
+Lm11.rich <-  lme(SpRichness_quadrat ~ SlopeAngle + AvgRkCov, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
 #three variables
 
-Lm12.per <- lme(Invert_percent ~ AvgDailMaxCurr + Quadrat, 
+Lm12.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm13.per <- lme(Invert_percent ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
+Lm13.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat + SlopeAngle, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm14.per <- lme(Invert_percent ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
+Lm14.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat + AvgRkCov, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm15.per <- lme(Invert_percent ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov, 
+Lm15.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
-Lm16.per <- lme(Invert_percent ~ Quadrat + SlopeAngle + AvgRkCov, 
+Lm16.rich <- lme(SpRichness_quadrat ~ Quadrat + SlopeAngle + AvgRkCov, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
 # four variables
 
-Lm17.per <- lme(Invert_percent ~ AvgDailMaxCurr + Quadrat + SlopeAngle + AvgRkCov, 
+Lm17.rich <- lme(SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat + SlopeAngle + AvgRkCov, 
             random = ~ 1 | Site, data = all.data, method = "ML")
 
 
 names <- c("Null", "Current", "Depth", "Slope", "Rock", "ContCurrent")
 
-AICtab(Null.per, Lm1.per, Lm2.per, Lm3.per, Lm4.per, Lm5.per, Lm6.per, Lm7.per, Lm8.per,Lm9.per, Lm10.per, Lm11.per, Lm12.per, Lm13.per, Lm14.per, Lm15.per, Lm16.per, Lm17.per, base=TRUE, weights=TRUE, logLik=TRUE)
+AICtab(Null.rich, Lm1.rich, Lm2.rich, Lm3.rich, Lm4.rich, Lm5.rich, Lm6.rich, Lm7.rich, Lm8.rich,Lm9.rich, Lm10.rich, Lm11.rich, Lm12.rich, Lm13.rich, Lm14.rich, Lm15.rich, Lm16.rich, Lm17.rich, base=TRUE, weights=TRUE, logLik=TRUE)
 ```
 
-    ##          logLik AIC    dLogLik dAIC   df weight
-    ## Lm15.per -564.9 1141.7    4.7     0.0 6  0.2367
-    ## Lm5.per  -567.5 1143.1    2.0     1.4 4  0.1188
-    ## Lm11.per -566.6 1143.2    2.9     1.5 5  0.1094
-    ## Lm7.per  -566.7 1143.5    2.8     1.7 5  0.0989
-    ## Lm17.per -564.2 1144.4    5.3     2.7 8  0.0609
-    ## Lm1.per  -568.3 1144.6    1.2     2.9 4  0.0555
-    ## Lm8.per  -567.4 1144.8    2.1     3.1 5  0.0511
-    ## Lm3.per  -568.4 1144.9    1.1     3.2 4  0.0481
-    ## Null.per -569.5 1145.0    0.0     3.3 3  0.0454
-    ## Lm6.per  -566.9 1145.8    2.6     4.1 6  0.0306
-    ## Lm12.per -566.9 1145.8    2.6     4.1 6  0.0306
-    ## Lm16.per -566.0 1146.0    3.5     4.3 7  0.0282
-    ## Lm13.per -566.1 1146.2    3.4     4.5 7  0.0255
-    ## Lm4.per  -569.4 1146.8    0.1     5.1 4  0.0184
-    ## Lm14.per -566.7 1147.5    2.8     5.8 7  0.0131
-    ## Lm9.per  -567.8 1147.6    1.7     5.9 6  0.0124
-    ## Lm2.per  -568.9 1147.7    0.6     6.0 5  0.0117
-    ## Lm10.per -568.8 1149.5    0.7     7.8 6  0.0047
+    ##           logLik AIC    dLogLik dAIC   df weight
+    ## Lm14.rich -411.3  836.6   16.5     0.0 7  0.4083
+    ## Lm17.rich -410.9  837.7   17.0     1.1 8  0.2363
+    ## Lm13.rich -411.9  837.9   15.9     1.2 7  0.2197
+    ## Lm6.rich  -414.1  840.3   13.7     3.7 6  0.0650
+    ## Lm12.rich -414.1  840.3   13.7     3.7 6  0.0650
+    ## Lm8.rich  -418.8  847.6    9.0    11.0 5  0.0017
+    ## Lm15.rich -418.3  848.7    9.5    12.1 6  <0.001
+    ## Lm7.rich  -419.4  848.8    8.4    12.2 5  <0.001
+    ## Lm9.rich  -418.6  849.2    9.2    12.6 6  <0.001
+    ## Lm10.rich -419.2  850.3    8.7    13.7 6  <0.001
+    ## Lm2.rich  -420.3  850.7    7.5    14.1 5  <0.001
+    ## Lm16.rich -418.4  850.9    9.4    14.3 7  <0.001
+    ## Lm5.rich  -421.6  851.3    6.2    14.7 4  <0.001
+    ## Lm1.rich  -425.3  858.6    2.5    22.0 4  <0.001
+    ## Lm3.rich  -426.1  860.2    1.7    23.5 4  <0.001
+    ## Lm4.rich  -426.7  861.3    1.2    24.7 4  <0.001
+    ## Null.rich -427.8  861.7    0.0    25.0 3  <0.001
+    ## Lm11.rich -425.9  861.9    1.9    25.2 5  <0.001
 
 ``` r
-Lm15.per
+Lm14.rich
 ```
 
     ## Linear mixed-effects model fit by maximum likelihood
     ##   Data: all.data 
-    ##   Log-likelihood: -564.8529
-    ##   Fixed: Invert_percent ~ AvgDailMaxCurr + SlopeAngle + AvgRkCov 
-    ##    (Intercept) AvgDailMaxCurr     SlopeAngle       AvgRkCov 
-    ##    169.9913478      0.1921314      1.1406753     -1.7527602 
+    ##   Log-likelihood: -411.3094
+    ##   Fixed: SpRichness_quadrat ~ AvgDailMaxCurr + Quadrat + AvgRkCov 
+    ##    (Intercept) AvgDailMaxCurr     QuadratQ30     QuadratQ50       AvgRkCov 
+    ##   -19.66121870     0.09686269     2.30952381     5.38095238     0.33509377 
     ## 
     ## Random effects:
     ##  Formula: ~1 | Site
     ##         (Intercept) Residual
-    ## StdDev:     11.5606 19.80831
+    ## StdDev:    1.517749 6.180085
     ## 
     ## Number of Observations: 126
     ## Number of Groups: 14
 
 ``` r
-plot(Lm15.per)
+plot(Lm14.rich) # looks good
 ```
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/sp%20richness-1.png)<!-- -->
 
 ``` r
-qqnorm(resid(Lm15.per))
+qqnorm(resid(Lm14.rich)) # looks good
 ```
 
-![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-22-2.png)<!-- -->
+![](HiLo_exploratory_files/figure-gfm/sp%20richness-2.png)<!-- -->
+
+Again there are several models within 2 AIC so it is very clear that all
+of these factors are important in predicting species richness.
+
+Plotting individual predictors from Lm14
+
+Current
+
+![](HiLo_exploratory_files/figure-gfm/current-1.png)<!-- -->
+
+Depth
+
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+
+Rock Cover
+
+![](HiLo_exploratory_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
